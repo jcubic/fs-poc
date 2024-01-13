@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>FS PoC</title>
+  </head>
+  <body>
+    <p>It works</p>
+    <a href="/~kuba/jcubic/poc-fs/">App</a>
+    <script src="https://cdn.jsdelivr.net/npm/@isomorphic-git/lightning-fs@4.6.0/dist/lightning-fs.min.js"></script>
+    <script>
+     const root = location.pathname.replace(/admin\/?$/, '');
+     if ('serviceWorker' in navigator) {
+         navigator.serviceWorker.register(`${root}sw.js`, { scope: root })
+                  .then(function(reg) {
+                      reg.addEventListener('updatefound', function() {
+                          const installingWorker = reg.installing;
+                          console.log('A new service worker is being installed:',
+                                      installingWorker);
+                      });
+                      // registration worked
+                      console.log('Registration succeeded. Scope is ' + reg.scope);
+                  }).catch(function(error) {
+                      // registration failed
+                      console.log('Registration failed with ' + error);
+                  });
+     }
+     const { promises: fs } = new LightningFS("testfs");
+     fs.writeFile('/index.html', `<!DOCTYPE html><html><body><h1>FS works</h1><a href="${root}foo.html">foo link</a><br><a href="${root}admin/">admin</a></body></html>`);
+     fs.writeFile('/foo.html', `<!DOCTYPE html><html><body><h1>Foo</h1><a href="${root}">home</a></html>`);
+    </script>
+  </body>
+</html>
