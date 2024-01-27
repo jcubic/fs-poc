@@ -1,5 +1,6 @@
 importScripts(
     'https://cdn.jsdelivr.net/npm/@jcubic/wayne/index.umd.min.js',
+    'https://cdn.jsdelivr.net/npm/idb-keyval/dist/umd.js',
     'https://cdn.jsdelivr.net/npm/@isomorphic-git/lightning-fs@4.6.0/dist/lightning-fs.min.js',
     'https://cdn.jsdelivr.net/gh/jcubic/static@master/js/path.js',
     'https://cdn.jsdelivr.net/gh/jcubic/static@master/js/mime.min.js'
@@ -16,13 +17,10 @@ const test = url => {
     return !path.match(/admin|sw.js/) && !path.startsWith('/content');
 };
 
-let root = '/';
-
-const dir = () => root;
-
-self.addEventListener('message', ({ data }) => {
-    root = data;
-});
+const dir = async () => {
+  const dir = await idbKeyval.get('__dir__');
+  return dir ?? '/';
+};
 
 app.use(wayne.FileSystem({ path, fs, mime, dir, test }));
 
