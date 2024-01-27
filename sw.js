@@ -4,7 +4,7 @@ importScripts(
     'https://cdn.jsdelivr.net/gh/jcubic/static@master/js/path.js',
     'https://cdn.jsdelivr.net/gh/jcubic/static@master/js/mime.min.js'
 );
-const { promises: fs } = new LightningFS("testfs");
+const fs = new LightningFS('testfs');
 
 const app = new wayne.Wayne();
 
@@ -16,7 +16,15 @@ const test = url => {
     return !path.match(/admin|sw.js/) && !path.startsWith('/content');
 };
 
-app.use(wayne.FileSystem({ path, fs, mime, test }));
+let root = '/';
+
+const dir = () => root;
+
+self.addEventListener('message', ({ data }) => {
+    root = data;
+});
+
+app.use(wayne.FileSystem({ path, fs, mime, dir, test }));
 
 self.addEventListener('activate', (event) => {
   event.waitUntil(clients.claim());

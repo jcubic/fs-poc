@@ -7,8 +7,8 @@ RewriteRule ^(.*)$ https://%{SERVER_NAME}%{REQUEST_URI} [L,R=301]
 
 RewriteCond %{HTTP_HOST} localhost
 RewriteCond %{REQUEST_URI} !sw.js
-RewriteCond %{REQUEST_URI} !~kuba/jcubic/poc-fs/admin/
-RewriteRule ^(.*)$ /~kuba/jcubic/poc-fs/admin/$1 [L,R=307]
+RewriteCond %{REQUEST_URI} !~kuba/jcubic/wayne/poc-fs/admin/
+RewriteRule ^(.*)$ /~kuba/jcubic/wayne/poc-fs/admin/$1 [L,R=307]
 
 RewriteCond %{HTTP_HOST} !localhost
 RewriteCond %{REQUEST_URI} !sw.js
