@@ -14,13 +14,31 @@ const test = url => {
         return false;
     }
     const path = url.pathname;
-    return !path.match(/admin|sw.js/) && !path.startsWith('/content');
+    return !path.match(/admin|sw.js|favicon.ico/) && !path.startsWith('/content');
 };
 
 const dir = async () => {
   const dir = await idbKeyval.get('__dir__');
   return dir ?? '/';
 };
+
+function fs_interecept(callback) {
+    return function(req, res, next) {
+        const send = res.send.bind(res);
+        res.send = function(data, ...rest) {
+            const url = new URL(req.url);
+            if (test(url)) {
+                data = callback(data);
+            }
+            return send(data, ...rest);
+        };
+        next();
+    };
+}
+
+app.use(fs_interecept(function(html) {
+    return html.replace(/<\/body>/, `<script>console.log('intercepted')</script></body>`);
+}));
 
 app.use(wayne.FileSystem({ path, fs, mime, dir, test }));
 
